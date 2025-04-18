@@ -380,6 +380,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Market Routes
+  app.get("/api/produce-markets", requireAdmin, async (req, res) => {
+    try {
+      const { category, region, status } = req.query;
+      const filters: any = {};
+      
+      if (category) filters.category = category;
+      if (region) filters.region = region;
+      if (status) filters.status = status;
+      
+      const produceMarkets = await storage.getAllProduceMarkets(filters);
+      res.json(produceMarkets);
+    } catch (error) {
+      console.error("Error fetching produce markets:", error);
+      res.status(500).json({ message: "Failed to fetch produce markets" });
+    }
+  });
+  
+  app.get("/api/produce-markets/:id", requireAdmin, async (req, res) => {
+    try {
+      const marketId = parseInt(req.params.id);
+      if (isNaN(marketId)) {
+        return res.status(400).json({ message: "Invalid produce market ID" });
+      }
+      
+      const produceMarket = await storage.getProduceMarket(marketId);
+      if (!produceMarket) {
+        return res.status(404).json({ message: "Produce market not found" });
+      }
+      
+      res.json(produceMarket);
+    } catch (error) {
+      console.error(`Error fetching produce market ${req.params.id}:`, error);
+      res.status(500).json({ message: "Failed to fetch produce market" });
+    }
+  });
+  
+  app.post("/api/produce-markets", requireAdmin, async (req, res) => {
+    try {
+      const marketData = insertProduceMarketSchema.parse(req.body);
+      const produceMarket = await storage.createProduceMarket(marketData);
+      
+      // Create audit log for produce market creation
+      await storage.createAuditLog({
+        adminId: req.user.id,
+        action: "produce_market_creation",
+        metadata: { marketId: produceMarket.id, produceName: produceMarket.produceName }
+      });
+      
+      res.status(201).json(produceMarket);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid produce market data", errors: error.errors });
+      }
+      console.error("Error creating produce market:", error);
+      res.status(500).json({ message: "Failed to create produce market" });
+    }
+  });
+  
+  app.put("/api/produce-markets/:id", requireAdmin, async (req, res) => {
+    try {
+      const marketId = parseInt(req.params.id);
+      if (isNaN(marketId)) {
+        return res.status(400).json({ message: "Invalid produce market ID" });
+      }
+      
+      // For partial updates
+      const updateSchema = insertProduceMarketSchema.partial();
+      const marketData = updateSchema.parse(req.body);
+      
+      const produceMarket = await storage.getProduceMarket(marketId);
+      if (!produceMarket) {
+        return res.status(404).json({ message: "Produce market not found" });
+      }
+      
+      const updatedMarket = await storage.updateProduceMarket(marketId, marketData);
+      
+      // Create audit log for produce market update
+      await storage.createAuditLog({
+        adminId: req.user.id,
+        action: "produce_market_update",
+        metadata: { 
+          marketId, 
+          produceName: produceMarket.produceName,
+          updates: Object.keys(marketData)
+        }
+      });
+      
+      res.json(updatedMarket);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid produce market data", errors: error.errors });
+      }
+      console.error(`Error updating produce market ${req.params.id}:`, error);
+      res.status(500).json({ message: "Failed to update produce market" });
+    }
+  });
+  
+  app.delete("/api/produce-markets/:id", requireSuperAdmin, async (req, res) => {
+    try {
+      const marketId = parseInt(req.params.id);
+      if (isNaN(marketId)) {
+        return res.status(400).json({ message: "Invalid produce market ID" });
+      }
+      
+      const produceMarket = await storage.getProduceMarket(marketId);
+      if (!produceMarket) {
+        return res.status(404).json({ message: "Produce market not found" });
+      }
+      
+      const success = await storage.deleteProduceMarket(marketId);
+      if (!success) {
+        return res.status(500).json({ message: "Failed to delete produce market" });
+      }
+      
+      // Create audit log for produce market deletion
+      await storage.createAuditLog({
+        adminId: req.user.id,
+        action: "produce_market_deletion",
+        metadata: { 
+          marketId, 
+          produceName: produceMarket.produceName,
+          category: produceMarket.category
+        }
+      });
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error(`Error deleting produce market ${req.params.id}:`, error);
+      res.status(500).json({ message: "Failed to delete produce market" });
+    }
+  });
+  
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { toast } from "@/hooks/use-toast";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
 import { Button } from "@/components/ui/button";
@@ -246,11 +248,74 @@ export default function Market() {
     source: '',
   });
 
-  // Fetch produce prices data
-  // In a real application, this would be a query to the server
-  const { data: producePrices, isLoading } = useQuery<ProducePrice[]>({
-    queryKey: ['producePrices'],
-    queryFn: () => Promise.resolve(sampleProducePrices),
+  // Fetch produce prices data from API
+  const { data: producePrices, isLoading, isError } = useQuery<ProducePrice[]>({
+    queryKey: ['/api/produce-markets'],
+  });
+  
+  // Create mutation for adding new produce market
+  const createMutation = useMutation({
+    mutationFn: async (data: Partial<ProducePrice>) => {
+      const res = await apiRequest('POST', '/api/produce-markets', data);
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Produce price added successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/produce-markets'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: `Failed to add produce price: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Update mutation for editing produce market
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number, data: Partial<ProducePrice> }) => {
+      const res = await apiRequest('PUT', `/api/produce-markets/${id}`, data);
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Produce price updated successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/produce-markets'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: `Failed to update produce price: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Delete mutation for removing produce market
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest('DELETE', `/api/produce-markets/${id}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Produce price deleted successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/produce-markets'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: `Failed to delete produce price: ${error.message}`,
+        variant: "destructive",
+      });
+    },
   });
 
   // Filtered and sorted data
@@ -334,17 +399,42 @@ export default function Market() {
 
   // Handle add/edit submit
   const handleSubmit = () => {
-    // In a real application, this would create/update a record on the server
-    console.log('Submitting form data:', formData, 'Edit ID:', editProduceId);
     setAddProduceDialog(false);
-    // After API call, you would want to refresh the data
+    
+    // Calculate change and percentChange
+    const price = formData.price || 0;
+    const previousPrice = formData.previousPrice || 0;
+    const change = price - previousPrice;
+    const percentChange = previousPrice > 0 ? (change / previousPrice) * 100 : 0;
+    
+    // Determine status based on price change
+    let status: 'rising' | 'falling' | 'stable' = 'stable';
+    if (change > 0) status = 'rising';
+    else if (change < 0) status = 'falling';
+    
+    // Add computed fields to form data
+    const submitData = {
+      ...formData,
+      change,
+      percentChange,
+      status,
+      date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+    };
+    
+    if (editProduceId) {
+      // Update existing record
+      updateMutation.mutate({ id: editProduceId, data: submitData });
+    } else {
+      // Create new record
+      createMutation.mutate(submitData);
+    }
   };
 
   // Handle delete
   const handleDelete = (id: number) => {
-    // In a real application, this would delete a record on the server
-    console.log('Deleting produce with ID:', id);
-    // After API call, you would want to refresh the data
+    if (confirm('Are you sure you want to delete this produce price entry?')) {
+      deleteMutation.mutate(id);
+    }
   };
 
   // Format price display
