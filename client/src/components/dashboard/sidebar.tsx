@@ -16,6 +16,11 @@ import {
   User,
   X,
   Menu,
+  TrendingUp,
+  DollarSign,
+  ShoppingCart,
+  BarChart2,
+  LineChart,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -161,6 +166,45 @@ export function Sidebar({
               </Link>
             </nav>
 
+            <p className="px-4 text-xs font-medium text-neutral-500 uppercase mt-6 mb-2">Market</p>
+            <nav className="space-y-1">
+              <Link href="/market">
+                <a className={cn(
+                  "flex items-center space-x-3 px-4 py-3 rounded-md text-sm font-medium",
+                  location === "/market" 
+                    ? "bg-primary/10 text-primary border-l-4 border-primary" 
+                    : "text-neutral-600 hover:bg-neutral-50 hover:text-primary"
+                )}>
+                  <TrendingUp className="h-5 w-5" />
+                  <span>Produce Prices</span>
+                </a>
+              </Link>
+
+              <Link href="/market/analytics">
+                <a className={cn(
+                  "flex items-center space-x-3 px-4 py-3 rounded-md text-sm font-medium",
+                  location === "/market/analytics" 
+                    ? "bg-primary/10 text-primary border-l-4 border-primary" 
+                    : "text-neutral-600 hover:bg-neutral-50 hover:text-primary"
+                )}>
+                  <LineChart className="h-5 w-5" />
+                  <span>Market Analytics</span>
+                </a>
+              </Link>
+
+              <Link href="/market/manage">
+                <a className={cn(
+                  "flex items-center space-x-3 px-4 py-3 rounded-md text-sm font-medium",
+                  location === "/market/manage" 
+                    ? "bg-primary/10 text-primary border-l-4 border-primary" 
+                    : "text-neutral-600 hover:bg-neutral-50 hover:text-primary"
+                )}>
+                  <ShoppingCart className="h-5 w-5" />
+                  <span>Manage Listings</span>
+                </a>
+              </Link>
+            </nav>
+            
             <p className="px-4 text-xs font-medium text-neutral-500 uppercase mt-6 mb-2">Advanced</p>
             <nav className="space-y-1">
               <Link href="/compliance">

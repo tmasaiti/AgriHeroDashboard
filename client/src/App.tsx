@@ -11,6 +11,7 @@ import ContentModeration from "@/pages/content-moderation";
 import SystemAnalytics from "@/pages/system-analytics";
 import FeatureConfiguration from "@/pages/feature-configuration";
 import ComplianceReporting from "@/pages/compliance-reporting";
+import Market from "@/pages/market";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 
@@ -23,6 +24,7 @@ function Router() {
       <ProtectedRoute path="/analytics" component={SystemAnalytics} />
       <ProtectedRoute path="/features" component={FeatureConfiguration} />
       <ProtectedRoute path="/compliance" component={ComplianceReporting} />
+      <ProtectedRoute path="/market" component={Market} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
