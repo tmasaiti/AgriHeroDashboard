@@ -1,0 +1,115 @@
+**AgriHero6 Product Requirements Document (PRD)
+Super Administrator Dashboard**
+1. Introduction
+The Super Administrator Dashboard is a centralized control panel for managing AgriHero6’s global operations, user permissions, system health, and data analytics. This document outlines the functional, technical, and security requirements for the dashboard, designed for internal administrators and government/regulatory stakeholders.
+________________________________________
+2. Objectives
+•	Provide full system oversight (users, content, transactions).
+•	Enable role-based access control (RBAC) for admin teams.
+•	Monitor real-time system health and performance.
+•	Generate regulatory reports for government compliance.
+•	Manage global feature flags (e.g., disable marketplace in specific regions).
+________________________________________
+3. User Roles & Permissions
+Role	Permissions
+Super Admin	Full access, including user deletion and API key management
+Regional Admin	User management, content moderation (assigned countries)
+Support Agent	Read-only access + ticket resolution
+Government Auditor	Data export only (anonymized aggregates)
+________________________________________
+4. Core Features
+4.1 User Management
+•	CRUD Operations: Create, suspend, or delete users (farmers, vendors, agronomists).
+•	Bulk Actions: Import/export user lists (CSV/Excel).
+•	Activity Logs: Last login, transactions, and edits (filterable by date/region).
+4.2 Content Moderation
+•	Marketplace Oversight: Approve/reject vendor listings (with audit trail).
+•	Reported Content: Takedown requests for inappropriate guides or chats.
+•	Automated Filters: Flag keywords (e.g., fraudulent product claims).
+4.3 System Analytics
+•	Real-Time Metrics:
+o	Active users, API latency, error rates.
+o	Regional adoption heatmaps.
+•	Financial Dashboards:
+o	Subscription revenue, marketplace commissions.
+o	Fraud detection (unusual transaction patterns).
+4.4 Feature Configuration
+•	A/B Testing: Enable/disable features per user segment.
+•	Emergency Toggles: Disable payments or IoT sync during outages.
+•	Localization: Set default languages/currencies per country.
+4.5 Compliance & Reporting
+•	GDPR Tools: Anonymize or purge user data on request.
+•	Government Exports:
+o	Crop yield averages (by region).
+o	Fertilizer usage reports.
+•	Audit Logs: Who changed what and when (immutable records).
+4.6 Security & API Management
+•	API Key Rotation: Auto-expire keys every 90 days.
+•	IP Allowlisting: Restrict admin panel access to office VPNs.
+•	2FA Enforcement: Require YubiKey or Google Authenticator.
+________________________________________
+5. Technical Specifications
+5.1 Frontend (React Native/Web)
+•	Framework: React Admin (for web) + Custom React Native (for mobile).
+•	Key Libraries:
+o	react-query for real-time data.
+o	react-table for sortable/filterable lists.
+o	mapbox-gl for regional heatmaps.
+5.2 Backend (Node.js)
+•	APIs:
+o	GET /admin/users?role=farmer&region=kenya (filtered lists).
+o	POST /admin/feature-flags (update toggle states).
+•	Rate Limiting: 100 requests/minute per admin.
+5.3 Database (PostgreSQL)
+•	Tables:
+sql
+•	CREATE TABLE admin_audit_logs (
+•	  id SERIAL PRIMARY KEY,
+•	  admin_id INT REFERENCES users(id),
+•	  action VARCHAR(100),  -- e.g., "user_deletion"
+•	  metadata JSONB,      -- { "user_id": 123, "reason": "fraud" }
+•	  timestamp TIMESTAMPTZ DEFAULT NOW()
+•	);
+5.4 Security Requirements
+•	Data Encryption: AES-256 for PII at rest and in transit.
+•	Penetration Testing: Annual audits via OWASP ZAP.
+•	Session Timeout: 15 minutes of inactivity.
+________________________________________
+6. UI/UX Requirements
+•	Priority: Functionality > Aesthetics (internal tool).
+•	Accessibility: WCAG 2.1 AA compliant (e.g., screen reader support).
+•	Mobile Responsive: Critical actions usable on tablets.
+Wireframe Highlights:
+1.	Left Nav: Modules (Users, Analytics, Compliance).
+2.	Main View: Filterable data tables + action buttons.
+3.	Alert Banner: System status (e.g., "API Latency: 12% ↑").
+________________________________________
+7. Testing & Compliance
+7.1 Test Cases
+ID	Scenario	Expected Result
+TC-01	Ban a fraudulent vendor	Vendor’s listings hidden instantly
+TC-02	Export Kenya’s maize yields	CSV with anonymized farm IDs
+7.2 Regulatory Checks
+•	EU GDPR: Right-to-be-forgotten workflow.
+•	Kenya Data Act: Local server option for gov’t audits.
+________________________________________
+8. Rollout Plan
+Phase	Deliverable	Timeline
+Alpha	Core user management	Week 1-2
+Beta	Analytics + feature toggles	Week 3-4
+GA	Full RBAC + compliance tools	Week 5
+________________________________________
+9. Success Metrics
+•	Admin Efficiency: <5 clicks for critical actions.
+•	Incident Response: 95% of takedowns within 1 hour.
+•	Uptime: 99.9% SLA for admin APIs.
+Approval:
+Role	Name	Signature	Date
+CTO	[Name]	[ ]	[ ]
+Lead Auditor	[Name]	[ ]	[ ]
+________________________________________
+Appendix:
+•	Risk Log: [Link]
+•	API Swagger Docs: [Link]
+This PRD ensures the Super Admin Dashboard aligns with AgriHero6’s scalability and security needs while meeting regulatory demands. Let me know if you’d like to prioritize specific modules (e.g., compliance vs. analytics).
+
