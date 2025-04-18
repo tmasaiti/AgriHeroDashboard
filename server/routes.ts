@@ -5,7 +5,8 @@ import { setupAuth } from "./auth";
 import { z } from "zod";
 import { 
   insertUserSchema, insertContentSchema, insertFeatureFlagSchema,
-  insertAuditLogSchema, insertComplianceReportSchema, insertSystemMetricSchema 
+  insertAuditLogSchema, insertComplianceReportSchema, insertSystemMetricSchema,
+  insertProduceMarketSchema
 } from "@shared/schema";
 
 // Middleware to check for admin role

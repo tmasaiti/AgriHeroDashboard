@@ -4,7 +4,8 @@ import {
   featureFlags, type FeatureFlag, type InsertFeatureFlag,
   auditLogs, type AuditLog, type InsertAuditLog,
   complianceReports, type ComplianceReport, type InsertComplianceReport,
-  systemMetrics, type SystemMetric, type InsertSystemMetric
+  systemMetrics, type SystemMetric, type InsertSystemMetric,
+  produceMarket, type ProduceMarket, type InsertProduceMarket
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -67,6 +68,7 @@ export class MemStorage implements IStorage {
   private auditLogs: Map<number, AuditLog>;
   private complianceReports: Map<number, ComplianceReport>;
   private systemMetrics: Map<number, SystemMetric>;
+  private produceMarkets: Map<number, ProduceMarket>;
   
   sessionStore: session.SessionStore;
   
@@ -76,6 +78,7 @@ export class MemStorage implements IStorage {
   private auditLogIdCounter: number;
   private complianceReportIdCounter: number;
   private systemMetricIdCounter: number;
+  private produceMarketIdCounter: number;
 
   constructor() {
     this.users = new Map();
@@ -84,6 +87,7 @@ export class MemStorage implements IStorage {
     this.auditLogs = new Map();
     this.complianceReports = new Map();
     this.systemMetrics = new Map();
+    this.produceMarkets = new Map();
     
     this.userIdCounter = 1;
     this.contentIdCounter = 1;
@@ -91,6 +95,7 @@ export class MemStorage implements IStorage {
     this.auditLogIdCounter = 1;
     this.complianceReportIdCounter = 1;
     this.systemMetricIdCounter = 1;
+    this.produceMarketIdCounter = 1;
     
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000 // prune expired entries every 24h
@@ -276,8 +281,113 @@ export class MemStorage implements IStorage {
     return this.filterItems(Array.from(this.systemMetrics.values()), filters);
   }
   
+  // Produce market methods
+  async getProduceMarket(id: number): Promise<ProduceMarket | undefined> {
+    return this.produceMarkets.get(id);
+  }
+  
+  async createProduceMarket(insertProduceMarket: InsertProduceMarket): Promise<ProduceMarket> {
+    const id = this.produceMarketIdCounter++;
+    const now = new Date();
+    const produceMarket: ProduceMarket = { 
+      ...insertProduceMarket, 
+      id, 
+      createdAt: now,
+      updatedAt: now 
+    };
+    this.produceMarkets.set(id, produceMarket);
+    return produceMarket;
+  }
+  
+  async updateProduceMarket(id: number, produceMarketData: Partial<InsertProduceMarket>): Promise<ProduceMarket | undefined> {
+    const produceMarket = await this.getProduceMarket(id);
+    if (!produceMarket) return undefined;
+    
+    const now = new Date();
+    const updatedProduceMarket: ProduceMarket = { 
+      ...produceMarket, 
+      ...produceMarketData,
+      updatedAt: now 
+    };
+    this.produceMarkets.set(id, updatedProduceMarket);
+    return updatedProduceMarket;
+  }
+  
+  async deleteProduceMarket(id: number): Promise<boolean> {
+    return this.produceMarkets.delete(id);
+  }
+  
+  async getAllProduceMarkets(filters?: Partial<ProduceMarket>): Promise<ProduceMarket[]> {
+    return this.filterItems(Array.from(this.produceMarkets.values()), filters);
+  }
+  
   // Initialize with sample data for testing
   private async initializeData() {
+    // Initialize sample produce market data
+    await this.createProduceMarket({
+      produceName: "Maize",
+      category: "Grain",
+      price: "32.50",
+      previousPrice: "30.20",
+      change: "2.30",
+      percentChange: "7.62",
+      region: "East Africa",
+      date: "2025-04-16",
+      source: "Regional Market Index",
+      status: "rising"
+    });
+    
+    await this.createProduceMarket({
+      produceName: "Tomatoes",
+      category: "Vegetable",
+      price: "45.75",
+      previousPrice: "48.20",
+      change: "-2.45",
+      percentChange: "-5.08",
+      region: "West Africa",
+      date: "2025-04-16",
+      source: "National Market Survey",
+      status: "falling"
+    });
+    
+    await this.createProduceMarket({
+      produceName: "Coffee Beans",
+      category: "Cash Crop",
+      price: "425.00",
+      previousPrice: "412.70",
+      change: "12.30",
+      percentChange: "2.98",
+      region: "East Africa",
+      date: "2025-04-16",
+      source: "Global Commodity Index",
+      status: "rising"
+    });
+    
+    await this.createProduceMarket({
+      produceName: "Rice",
+      category: "Grain",
+      price: "54.25",
+      previousPrice: "54.20",
+      change: "0.05",
+      percentChange: "0.09",
+      region: "West Africa",
+      date: "2025-04-16",
+      source: "Regional Market Index",
+      status: "stable"
+    });
+    
+    await this.createProduceMarket({
+      produceName: "Potatoes",
+      category: "Root Vegetable",
+      price: "28.35",
+      previousPrice: "30.50",
+      change: "-2.15",
+      percentChange: "-7.05",
+      region: "East Africa",
+      date: "2025-04-16",
+      source: "National Market Survey",
+      status: "falling"
+    });
     // Create admin user
     await this.createUser({
       username: "superadmin",
