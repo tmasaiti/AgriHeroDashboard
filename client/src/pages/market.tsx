@@ -75,139 +75,22 @@ interface ProducePrice {
   status: "rising" | "falling" | "stable";
 }
 
-// Sample data - in a real application, this would come from an API
-const sampleProducePrices: ProducePrice[] = [
-  { 
-    id: 1, 
-    produceName: "Maize", 
-    category: "Grain",
-    price: 32.50, 
-    previousPrice: 30.20, 
-    change: 2.30, 
-    percentChange: 7.62, 
-    region: "East Africa", 
-    date: "2025-04-16", 
-    source: "Regional Market Index",
-    status: "rising" 
-  },
-  { 
-    id: 2, 
-    produceName: "Tomatoes", 
-    category: "Vegetable",
-    price: 45.75, 
-    previousPrice: 48.20, 
-    change: -2.45, 
-    percentChange: -5.08, 
-    region: "West Africa", 
-    date: "2025-04-16", 
-    source: "National Market Survey",
-    status: "falling" 
-  },
-  { 
-    id: 3, 
-    produceName: "Coffee Beans", 
-    category: "Cash Crop",
-    price: 425.00, 
-    previousPrice: 412.70, 
-    change: 12.30, 
-    percentChange: 2.98, 
-    region: "East Africa", 
-    date: "2025-04-16", 
-    source: "Global Commodity Index",
-    status: "rising" 
-  },
-  { 
-    id: 4, 
-    produceName: "Rice", 
-    category: "Grain",
-    price: 54.25, 
-    previousPrice: 54.20, 
-    change: 0.05, 
-    percentChange: 0.09, 
-    region: "West Africa", 
-    date: "2025-04-16", 
-    source: "Regional Market Index",
-    status: "stable" 
-  },
-  { 
-    id: 5, 
-    produceName: "Potatoes", 
-    category: "Root Vegetable",
-    price: 28.35, 
-    previousPrice: 30.50, 
-    change: -2.15, 
-    percentChange: -7.05, 
-    region: "East Africa", 
-    date: "2025-04-16", 
-    source: "National Market Survey",
-    status: "falling" 
-  },
-  { 
-    id: 6, 
-    produceName: "Cassava", 
-    category: "Root Vegetable",
-    price: 18.40, 
-    previousPrice: 17.80, 
-    change: 0.60, 
-    percentChange: 3.37, 
-    region: "West Africa", 
-    date: "2025-04-16", 
-    source: "Local Market Reports",
-    status: "rising" 
-  },
-  { 
-    id: 7, 
-    produceName: "Cocoa", 
-    category: "Cash Crop",
-    price: 380.15, 
-    previousPrice: 372.50, 
-    change: 7.65, 
-    percentChange: 2.05, 
-    region: "West Africa", 
-    date: "2025-04-16", 
-    source: "Global Commodity Index",
-    status: "rising" 
-  },
-  { 
-    id: 8, 
-    produceName: "Bananas", 
-    category: "Fruit",
-    price: 21.75, 
-    previousPrice: 22.50, 
-    change: -0.75, 
-    percentChange: -3.33, 
-    region: "East Africa", 
-    date: "2025-04-16", 
-    source: "Regional Market Index",
-    status: "falling" 
-  },
-  { 
-    id: 9, 
-    produceName: "Sorghum", 
-    category: "Grain",
-    price: 26.90, 
-    previousPrice: 26.85, 
-    change: 0.05, 
-    percentChange: 0.19, 
-    region: "East Africa", 
-    date: "2025-04-16", 
-    source: "National Market Survey",
-    status: "stable" 
-  },
-  { 
-    id: 10, 
-    produceName: "Sweet Potatoes", 
-    category: "Root Vegetable",
-    price: 19.50, 
-    previousPrice: 18.75, 
-    change: 0.75, 
-    percentChange: 4.00, 
-    region: "West Africa", 
-    date: "2025-04-16", 
-    source: "Local Market Reports",
-    status: "rising" 
-  }
-];
+// Define interface for produce market data from the API
+interface ApiProduceMarket {
+  id: number;
+  produceName: string;
+  category: string;
+  price: string; // API returns string values
+  previousPrice: string;
+  change: string;
+  percentChange: string;
+  region: string;
+  date: string;
+  source: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // For market-specific categories
 const produceCategories = [
@@ -251,6 +134,22 @@ export default function Market() {
   // Fetch produce prices data from API
   const { data: producePrices, isLoading, isError } = useQuery<ProducePrice[]>({
     queryKey: ['/api/produce-markets'],
+    select: (data: ApiProduceMarket[]) => {
+      // Transform API data to our frontend format
+      return data.map(item => ({
+        id: item.id,
+        produceName: item.produceName,
+        category: item.category,
+        price: parseFloat(item.price),
+        previousPrice: parseFloat(item.previousPrice),
+        change: parseFloat(item.change),
+        percentChange: parseFloat(item.percentChange),
+        region: item.region,
+        date: item.date,
+        source: item.source,
+        status: item.status as "rising" | "falling" | "stable",
+      }));
+    }
   });
   
   // Create mutation for adding new produce market
