@@ -8,7 +8,8 @@ import {
   ChevronDown,
   LogOut,
   User,
-  Settings
+  Settings,
+  X
 } from "lucide-react";
 import {
   DropdownMenu,
