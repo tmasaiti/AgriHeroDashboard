@@ -30,7 +30,9 @@ import {
   Server,
   Wifi,
   HardDrive,
-  Cpu
+  Cpu,
+  Check,
+  X
 } from "lucide-react";
 import { 
   LineChart, 
@@ -1053,7 +1055,7 @@ export default function SystemAnalytics() {
                       </div>
                     </div>
                     <div className="text-center mt-2">
-                      <p className="text-sm text-neutral-500">Check soon</p>
+                      <p className="text-sm text-neutral-500">Good</p>
                     </div>
                   </CardContent>
                 </Card>
