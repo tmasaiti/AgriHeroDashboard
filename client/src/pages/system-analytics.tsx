@@ -32,7 +32,20 @@ import {
   HardDrive,
   Cpu,
   Check,
-  X
+  X,
+  Shield,
+  Lock,
+  UserCog,
+  Settings,
+  FileJson,
+  FileSearch,
+  Webhook,
+  Link2,
+  FileCog,
+  Bell,
+  History,
+  ListFilter,
+  BarChart2
 } from "lucide-react";
 import { 
   LineChart, 
@@ -130,6 +143,123 @@ const serverStatusData = [
   { name: "CDN Edge 1", status: "operational", uptime: "99.99%", region: "East Africa" },
   { name: "CDN Edge 2", status: "operational", uptime: "99.90%", region: "West Africa" },
   { name: "Storage Server", status: "degraded", uptime: "99.82%", region: "East Africa" },
+];
+
+// Security incidents data
+const securityIncidentsData = [
+  { 
+    id: 1, 
+    title: "Suspicious Login Attempts", 
+    severity: "medium", 
+    timestamp: "1 hour ago", 
+    status: "investigating",
+    location: "West Africa",
+    ip: "197.168.32.114",
+    description: "Multiple failed login attempts detected from unusual IP address"
+  },
+  { 
+    id: 2, 
+    title: "API Rate Limit Exceeded", 
+    severity: "low", 
+    timestamp: "3 hours ago", 
+    status: "resolved",
+    location: "East Africa",
+    ip: "41.223.45.118",
+    description: "User account exceeding API rate limits repeatedly"
+  },
+  { 
+    id: 3, 
+    title: "Unauthorized Data Access Attempt", 
+    severity: "high", 
+    timestamp: "1 day ago", 
+    status: "resolved",
+    location: "External",
+    ip: "87.236.12.205",
+    description: "Attempt to access restricted data endpoints from unrecognized location"
+  },
+];
+
+// API endpoints data
+const apiEndpointsData = [
+  { 
+    name: "/api/crops", 
+    requests: 15281,
+    averageLatency: 78,
+    errorRate: 0.3,
+    status: "healthy"
+  },
+  { 
+    name: "/api/weather", 
+    requests: 28395,
+    averageLatency: 132,
+    errorRate: 1.2,
+    status: "warning"
+  },
+  { 
+    name: "/api/marketplace", 
+    requests: 8730,
+    averageLatency: 95,
+    errorRate: 0.5,
+    status: "healthy"
+  },
+  { 
+    name: "/api/user", 
+    requests: 43512,
+    averageLatency: 65,
+    errorRate: 0.2,
+    status: "healthy"
+  },
+  { 
+    name: "/api/analytics", 
+    requests: 2145,
+    averageLatency: 187,
+    errorRate: 2.8,
+    status: "warning"
+  }
+];
+
+// Audit log data
+const auditLogsData = [
+  { 
+    id: 1, 
+    action: "User Role Modified", 
+    user: "admin@agrihero.com", 
+    timestamp: "10 minutes ago", 
+    details: "Changed role from 'Editor' to 'Admin' for user ID: 1872",
+    ipAddress: "197.254.23.18"
+  },
+  { 
+    id: 2, 
+    action: "Content Removed", 
+    user: "moderator@agrihero.com", 
+    timestamp: "45 minutes ago", 
+    details: "Removed marketplace listing ID: 4581 due to policy violation",
+    ipAddress: "105.21.32.45"
+  },
+  { 
+    id: 3, 
+    action: "Feature Flag Updated", 
+    user: "developer@agrihero.com", 
+    timestamp: "2 hours ago", 
+    details: "Changed 'Enhanced Analytics' feature flag to ENABLED for all users",
+    ipAddress: "41.223.45.67"
+  },
+  { 
+    id: 4, 
+    action: "API Key Generated", 
+    user: "system@agrihero.com", 
+    timestamp: "5 hours ago", 
+    details: "Generated new API key for partner integration: FarmTech Solutions",
+    ipAddress: "10.0.45.12"
+  },
+  { 
+    id: 5, 
+    action: "System Setting Changed", 
+    user: "superadmin@agrihero.com", 
+    timestamp: "1 day ago", 
+    details: "Modified global content moderation settings: auto-approval disabled",
+    ipAddress: "197.254.23.19"
+  }
 ];
 
 const COLORS = ['#0078D4', '#107C10', '#FFB900', '#D83B01', '#5C2D91'];
@@ -258,6 +388,10 @@ export default function SystemAnalytics() {
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="content">Content</TabsTrigger>
               <TabsTrigger value="system">System Health</TabsTrigger>
+              <TabsTrigger value="security">Security</TabsTrigger>
+              <TabsTrigger value="api">API</TabsTrigger>
+              <TabsTrigger value="audit">Audit Logs</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview" className="space-y-6">
