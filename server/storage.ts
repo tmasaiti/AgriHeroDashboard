@@ -49,6 +49,13 @@ export interface IStorage {
   // System metrics operations
   createSystemMetric(metric: InsertSystemMetric): Promise<SystemMetric>;
   getAllSystemMetrics(filters?: Partial<SystemMetric>): Promise<SystemMetric[]>;
+  
+  // Market operations
+  getProduceMarket(id: number): Promise<ProduceMarket | undefined>;
+  createProduceMarket(produceMarket: InsertProduceMarket): Promise<ProduceMarket>;
+  updateProduceMarket(id: number, produceMarket: Partial<InsertProduceMarket>): Promise<ProduceMarket | undefined>;
+  deleteProduceMarket(id: number): Promise<boolean>;
+  getAllProduceMarkets(filters?: Partial<ProduceMarket>): Promise<ProduceMarket[]>;
 
   sessionStore: session.SessionStore;
 }

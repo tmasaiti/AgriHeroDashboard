@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, numeric } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -142,3 +142,36 @@ export type ComplianceReport = typeof complianceReports.$inferSelect;
 
 export type InsertSystemMetric = z.infer<typeof insertSystemMetricSchema>;
 export type SystemMetric = typeof systemMetrics.$inferSelect;
+
+// Market - Produce Prices
+export const produceMarket = pgTable("produce_market", {
+  id: serial("id").primaryKey(),
+  produceName: text("produce_name").notNull(),
+  category: text("category").notNull(),
+  price: text("price").notNull(),
+  previousPrice: text("previous_price").notNull(),
+  change: text("change").notNull(),
+  percentChange: text("percent_change").notNull(),
+  region: text("region").notNull(),
+  date: text("date").notNull(),
+  source: text("source").notNull(),
+  status: text("status").notNull(), // "rising" | "falling" | "stable"
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertProduceMarketSchema = createInsertSchema(produceMarket).pick({
+  produceName: true,
+  category: true,
+  price: true,
+  previousPrice: true,
+  change: true,
+  percentChange: true,
+  region: true,
+  date: true,
+  source: true,
+  status: true,
+});
+
+export type InsertProduceMarket = z.infer<typeof insertProduceMarketSchema>;
+export type ProduceMarket = typeof produceMarket.$inferSelect;

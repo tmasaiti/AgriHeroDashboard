@@ -54,7 +54,8 @@ import {
   Edit, 
   Trash2,
   Calendar,
-  Search
+  Search,
+  Clock
 } from "lucide-react";
 
 // Type definitions for market data
@@ -615,7 +616,7 @@ export default function Market() {
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem onClick={() => console.log('View history')}>
-                                    <Clock className="mr-2 h-4 w-4" />
+                                    <FileText className="mr-2 h-4 w-4" />
                                     <span>Price history</span>
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
