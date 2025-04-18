@@ -22,7 +22,15 @@ import {
   FileText,
   Flag,
   HeartPulse,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  Activity,
+  AlertCircle,
+  Clock,
+  Database,
+  Server,
+  Wifi,
+  HardDrive,
+  Cpu
 } from "lucide-react";
 import { 
   LineChart, 
@@ -73,11 +81,53 @@ const regionDistributionData = [
 ];
 
 const systemHealthData = [
-  { name: "API Latency", value: 125, threshold: 100 },
-  { name: "Error Rate", value: 3.2, threshold: 5 },
-  { name: "CPU Usage", value: 65, threshold: 80 },
-  { name: "Memory Usage", value: 72, threshold: 80 },
-  { name: "Disk Space", value: 48, threshold: 90 },
+  { name: "API Latency", value: 125, threshold: 100, icon: <Activity /> },
+  { name: "Error Rate", value: 3.2, threshold: 5, icon: <AlertCircle /> },
+  { name: "CPU Usage", value: 65, threshold: 80, icon: <Cpu /> },
+  { name: "Memory Usage", value: 72, threshold: 80, icon: <Server /> },
+  { name: "Disk Space", value: 48, threshold: 90, icon: <HardDrive /> },
+  { name: "Database Load", value: 35, threshold: 75, icon: <Database /> },
+  { name: "Network Bandwidth", value: 62, threshold: 85, icon: <Wifi /> },
+  { name: "Response Time", value: 210, threshold: 300, icon: <Clock /> },
+];
+
+// System incidents data
+const incidentsData = [
+  { 
+    id: 1, 
+    title: "API Latency Spike", 
+    level: "warning", 
+    timestamp: "2 hours ago", 
+    status: "investigating",
+    description: "We are investigating elevated API latency in the Africa region."
+  },
+  { 
+    id: 2, 
+    title: "Database Connection Issues", 
+    level: "critical", 
+    timestamp: "1 day ago", 
+    status: "resolved",
+    description: "Database connections were interrupted for 15 minutes. All systems are now operational."
+  },
+  { 
+    id: 3, 
+    title: "CDN Performance Degradation", 
+    level: "info", 
+    timestamp: "3 days ago", 
+    status: "resolved",
+    description: "Content delivery speeds were affected for users in Europe. Issue has been resolved."
+  }
+];
+
+// Server data
+const serverStatusData = [
+  { name: "API Server 1", status: "operational", uptime: "99.98%", region: "East Africa" },
+  { name: "API Server 2", status: "operational", uptime: "99.95%", region: "West Africa" },
+  { name: "Database Primary", status: "operational", uptime: "99.99%", region: "East Africa" },
+  { name: "Database Replica", status: "operational", uptime: "99.97%", region: "West Africa" },
+  { name: "CDN Edge 1", status: "operational", uptime: "99.99%", region: "East Africa" },
+  { name: "CDN Edge 2", status: "operational", uptime: "99.90%", region: "West Africa" },
+  { name: "Storage Server", status: "degraded", uptime: "99.82%", region: "East Africa" },
 ];
 
 const COLORS = ['#0078D4', '#107C10', '#FFB900', '#D83B01', '#5C2D91'];
