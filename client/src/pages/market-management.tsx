@@ -76,10 +76,29 @@ export default function MarketManagement() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
+    const data = {
+      produceName: formData.get('produceName') as string,
+      category: formData.get('category') as string,
+      price: formData.get('price') as string,
+      previousPrice: formData.get('price') as string, // Initially same as current price
+      change: "0",
+      percentChange: "0",
+      region: formData.get('region') as string || "East Africa",
+      date: new Date().toISOString().split('T')[0],
+      source: "Market Admin",
+      status: formData.get('status') as string
+    };
     
     if (selectedListing) {
-      updateMutation.mutate({ ...data, id: selectedListing.id });
+      const change = (parseFloat(data.price) - parseFloat(selectedListing.price)).toFixed(2);
+      const percentChange = ((parseFloat(change) / parseFloat(selectedListing.price)) * 100).toFixed(2);
+      updateMutation.mutate({ 
+        ...data, 
+        id: selectedListing.id,
+        previousPrice: selectedListing.price,
+        change,
+        percentChange
+      });
     } else {
       createMutation.mutate(data);
     }
@@ -172,6 +191,13 @@ export default function MarketManagement() {
                       name="category"
                       placeholder="Category"
                       defaultValue={selectedListing?.category}
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      name="region"
+                      placeholder="Region"
+                      defaultValue={selectedListing?.region}
                     />
                   </div>
                   <div>
