@@ -25,6 +25,8 @@ function Router() {
       <ProtectedRoute path="/features" component={FeatureConfiguration} />
       <ProtectedRoute path="/compliance" component={ComplianceReporting} />
       <ProtectedRoute path="/market" component={Market} />
+      <ProtectedRoute path="/market/analytics" component={MarketAnalytics} />
+      <ProtectedRoute path="/market/manage" component={MarketManagement} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>

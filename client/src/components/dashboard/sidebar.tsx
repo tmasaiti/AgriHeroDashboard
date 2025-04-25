@@ -82,7 +82,10 @@ export function Sidebar({
           <h1 className="font-semibold text-lg text-neutral-800">AgriHero6</h1>
         </div>
         {isMobileSidebarOpen && (
-          <Button variant="ghost" size="icon" onClick={closeMobileSidebar} className="md:hidden">
+          <Button variant="ghost" size="icon" onClick={() => {
+  closeMobileSidebar();
+  if (setMobileSidebarOpen) setMobileSidebarOpen(false);
+}} className="md:hidden">
             <X className="h-5 w-5" />
           </Button>
         )}
