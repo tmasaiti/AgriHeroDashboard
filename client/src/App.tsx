@@ -12,6 +12,8 @@ import SystemAnalytics from "@/pages/system-analytics";
 import FeatureConfiguration from "@/pages/feature-configuration";
 import ComplianceReporting from "@/pages/compliance-reporting";
 import Market from "@/pages/market";
+import MarketAnalytics from "@/pages/market-analytics";
+import MarketManagement from "@/pages/market-management";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 
