@@ -14,6 +14,7 @@ import ComplianceReporting from "@/pages/compliance-reporting";
 import Market from "@/pages/market";
 import MarketAnalytics from "@/pages/market-analytics";
 import MarketManagement from "@/pages/market-management";
+import Settings from "@/pages/settings";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 
@@ -29,6 +30,7 @@ function Router() {
       <ProtectedRoute path="/market" component={Market} />
       <ProtectedRoute path="/market/analytics" component={MarketAnalytics} />
       <ProtectedRoute path="/market/manage" component={MarketManagement} />
+      <ProtectedRoute path="/settings" component={Settings} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
